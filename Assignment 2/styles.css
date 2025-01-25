@@ -1,0 +1,25 @@
+* {
+    font-family: "Jersey 10", serif;    
+    background-color: rgb(245, 171, 191);
+    text-align: center;    
+}
+h1 {
+    font-size: 4em;
+    color: rgb(68, 88, 57);
+    display: inline-block;
+    border: solid 2px rgb(68, 88, 57);
+    border-radius: 8px; 
+    padding: 10px;
+}
+.list{
+    list-style-type: none;
+    font-size: 2em;
+}
+li {
+    padding: 10px;
+    color: rgb(0, 0, 0);
+}
+.link :hover {
+    color: rgb(195, 79, 176);
+}
+
