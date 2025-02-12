@@ -12,3 +12,8 @@ Session 4:
 http://web250-env.eba-zb3tmmft.us-east-1.elasticbeanstalk.com/router.php/lesson04
 In this session, I learned about using conditions and loops in PHP to create dynamic and responsive web functionality. I worked with if statements and while or for loops to handle different scenarios and repetitive tasks efficiently. This helped me understand how logic and iteration can be applied on the server side to control the behavior of web applications.
 These skills are crucial for my degree in Web Development AAS and will be valuable in my future career by enabling me to write efficient, logical code for solving real-world problems in web development.
+
+
+Session 5:
+http://web250-env.eba-zb3tmmft.us-east-1.elasticbeanstalk.com/router.php/lesson05
+In this session, I learned about handling strings and file operations. I looked into the concept of computer files; they're digital data stored in a computer system, which can be used in many formats such as reading, writing, and uploading. I also learned about the process of uploading. This lesson improved my understanding of file handling in PHP, including reading file contents, processing string data, and managing file uploads securely. I intend to apply this knowledge to my educational goals by developing web applications that need efficient data processing and user interaction through file uploads. These skills are crucial for a career in web development, where managing user data and performing server-side processing are essential aspects of it.
