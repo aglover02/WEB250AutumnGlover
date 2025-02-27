@@ -22,3 +22,8 @@ Session 6:
 http://web250-env.eba-zb3tmmft.us-east-1.elasticbeanstalk.com/router.php/lesson06
 In this session, I learned about dynamic arrays and how they work in computer science. A dynamic array is a data structure that can grow or shrink in size as elements are added or removed, unlike a static array that has a fixed size. I looked into concepts like capacity (the total allocated space) and logical size (the number of elements), as well as the amortized cost of resizing, which is minimized by expanding the array by a large factor, typically doubling. I also learned how dynamic arrays balance space and time complexity to handle changes in data efficiently. 
 Also ignore how the navigation looks at the bottom, I'm still working on how it looks. I wanted to include navigation on all the pages.
+
+Session 7: 
+http://web250-env.eba-zb3tmmft.us-east-1.elasticbeanstalk.com/router.php/lesson07
+In this session, I learned how to use PHP to process and display data from a user-uploaded file. By writing code that reads, organizes, and displays CSV data in a structured way, I got some hands-on experience handling file uploads, defining functions, sorting arrays, and integrating PHP within HTML. This knowledge is valuable as it bridges the gap between static web pages and interactive applications. I plan to apply these skills to my educational goals, such as completing my Web Development AAS, and building a strong portfolio of projects that showcase my ability to create user-driven applications. In the future, I aim to use my understanding of it to pursue a career as a web developer, where I can design efficient, data-driven solutions for real-world problems.
+
