@@ -60,7 +60,7 @@ $db = new \pdo(
                 comments: document.getElementById("comments").value
             };
 
-            fetch("/Assignment%209/lesson09_save_order.php" {
+            fetch("/Assignment9/lesson09_save_order.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(order)
@@ -108,12 +108,14 @@ $db = new \pdo(
             </select><br>
 
             <label for="toppings">Toppings:</label><br>
+            <div id="toppings">
             <input type="checkbox" name="toppings" value="Pepperoni"> Pepperoni<br>
             <input type="checkbox" name="toppings" value="Mushrooms"> Mushrooms<br>
             <input type="checkbox" name="toppings" value="Onions"> Onions<br>
             <input type="checkbox" name="toppings" value="Sausage"> Sausage<br>
             <input type="checkbox" name="toppings" value="Bacon"> Bacon<br>
             <input type="checkbox" name="toppings" value="Extra Cheese"> Extra Cheese<br>
+            </div>
 
             <label for="quantity">Quantity:</label>
             <input type="number" id="quantity" name="quantity" min="1" required><br>
