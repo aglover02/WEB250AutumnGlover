@@ -64,7 +64,8 @@ $db = new \pdo(
                 lname: document.getElementById("lname").value,
                 address: document.getElementById("address").value,
                 phone: document.getElementById("phone").value,
-                comments: document.getElementById("comments").value
+                comments: document.getElementById("comments").value,
+                email: document.getElementById("email").value
             };
 
             fetch("/router.php/lesson09_save_order", {
@@ -98,6 +99,9 @@ $db = new \pdo(
 
             <label>Phone:</label>
             <input type="text" id="phone" name="phone" required><br>
+
+            <label>Email:</label>
+            <input type="email" id="email" name="email" required><br>
 
             <label>Special Notes/Delivery Instructions:</label>
             <textarea id="comments" name="comments"></textarea><br>
