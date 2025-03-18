@@ -32,7 +32,7 @@ li, form {
 .mainLink :hover {
     color: rgb(195, 79, 176);
 }
-input[type=submit] input[type=text] input[type=number] input[type=hidden]{
+input[type=submit] input[type=text] input[type=number] input[type=hidden] input[type=checkbox]{
     font-size: .8em;
 }
 .fileUpload{

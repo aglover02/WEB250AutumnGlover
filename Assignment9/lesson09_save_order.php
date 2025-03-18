@@ -1,5 +1,9 @@
 <?php
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+
 try {
     $db = new \pdo(
         'sqlite:' . __DIR__
@@ -25,12 +29,13 @@ try {
     $customerRow = $stmt->fetch(pdo::FETCH_ASSOC);
 
     if (!$customerRow) {
-        $stmt = $db->prepare('INSERT INTO customers (bill_fname, bill_lname, phone, email) VALUES (:fname, :lname, :phone, :email)');
+        $stmt = $db->prepare('INSERT INTO customers (bill_fname, bill_lname, phone, email, address) VALUES (:fname, :lname, :phone, :email, :address)');
         $stmt->execute([
             'fname' => $customer['fname'],
             'lname' => $customer['lname'],
             'phone' => $customer['phone'],
-            'email' => $customer['email'] ?? ''
+            'email' => $customer['email'] ?? '',
+            'address' => $customer['address'] ?? ''
         ]);
         $customer_id = $db->lastInsertId();
     } else {
