@@ -149,9 +149,8 @@ $db = new \PDO(
     <section id="order-summary">
         <h2>Order Summary</h2>
         <p>No pizzas added yet.</p>
-        <p><button type="button" onclick="submitOrder()">Submit Order</button></p>
     </section>
-
+    <p><button type="button" onclick="submitOrder()">Submit Order</button></p>
     <section id="customer-orders-section">
         <h2>Your Orders</h2>
         <form method="GET">
