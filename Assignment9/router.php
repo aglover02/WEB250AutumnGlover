@@ -12,6 +12,7 @@ switch ($lessonName) {
     case 'lesson07':
     case 'lesson08':
     case 'lesson09':
+    case 'lesson09_save_order':
     case 'lesson10':
     case 'lesson11':
     case 'lesson12':
