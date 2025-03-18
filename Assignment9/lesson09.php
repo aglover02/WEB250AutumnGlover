@@ -21,13 +21,20 @@ $db = new \pdo(
         };
 
         function addPizza() {
+            console.log("addPizza() called");
+
             const size = document.getElementById("size").value;
             const toppings = Array.from(document.querySelectorAll('input[name="toppings"]:checked')).map(t => t.value);
             const quantity = parseInt(document.getElementById("quantity").value);
 
+            console.log("size:", size);
+            console.log("toppings:", toppings);
+            console.log("quantity:", quantity);
+
             const basePrice = size === "Small" ? 8 : size === "Medium" ? 12 : 15;
             const toppingPrice = size === "Small" ? 1 : size === "Medium" ? 1.5 : 2;
             const pizzaPrice = (basePrice + toppingPrice * toppings.length) * quantity;
+            console.log("pizzaPrice:", pizzaPrice);
 
             const pizza = { size, toppings, quantity, price: pizzaPrice };
             order.pizzas.push(pizza);
@@ -118,7 +125,7 @@ $db = new \pdo(
             </div>
 
             <label>Quantity:</label>
-            <input type="number" id="quantity" name="quantity" min="1" required><br>
+            <input type="number" id="quantity" name="quantity" min="1" value="1" required><br>
 
             <button type="button" onclick="addPizza()">Add Pizza</button>
         </div>
