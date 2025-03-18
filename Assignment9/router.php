@@ -19,7 +19,7 @@ switch ($lessonName) {
     case 'lesson12':
     case 'final_project':
         include "$lessonName.php";
-        break;
+        break; 
     default:
         include '404.html';
         break;

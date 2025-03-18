@@ -22,7 +22,7 @@ try {
     //check if customer exists
     $stmt = $db->prepare('SELECT id FROM customers WHERE phone = :phone');
     $stmt->execute(['phone' => $customer['phone']]);
-    $customerRow = $stmt->fetch(PDO::FETCH_ASSOC);
+    $customerRow = $stmt->fetch(pdo::FETCH_ASSOC);
 
     if (!$customerRow) {
         $stmt = $db->prepare('INSERT INTO customers (bill_fname, bill_lname, phone, email) VALUES (:fname, :lname, :phone, :email)');
