@@ -1,37 +1,8 @@
 <?php
-$db = new PDO('sqlite::memory:');
-
-$db->exec("
-    CREATE TABLE IF NOT EXISTS customers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        bill_fname TEXT,
-        bill_lname TEXT,
-        phone TEXT,
-        email TEXT,
-        address TEXT
-    );
-    
-    CREATE TABLE IF NOT EXISTS orders (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        customer_id INTEGER,
-        order_date TEXT,
-        total_price REAL,
-        comments TEXT,
-        status TEXT
-    );
-    
-    CREATE TABLE IF NOT EXISTS order_details (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        order_id INTEGER,
-        item_name TEXT,
-        size TEXT,
-        toppings TEXT,
-        quantity INTEGER,
-        price_per_unit REAL,
-        topping_price REAL
-    );
-");
-
+$db = new \pdo(
+    'sqlite:' . __DIR__ 
+    . DIRECTORY_SEPARATOR . 'website.sqlite'
+);
 ?>
 
 <!DOCTYPE html>
