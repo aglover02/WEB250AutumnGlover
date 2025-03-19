@@ -2,16 +2,12 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$db = new \PDO(
-    'sqlite:' . __DIR__
-    . DIRECTORY_SEPARATOR . 'database'
-    . DIRECTORY_SEPARATOR . 'website.sqlite'
-);
+$db = new pdo('sqlite::memory:');
 
 echo "Connected successfully!<br>";
 
 $stmt = $db->query("SELECT name FROM sqlite_master WHERE type='table'");
-$tables = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$tables = $stmt->fetchAll(pdo::FETCH_ASSOC);
 
 echo "<h2>Tables</h2>";
 echo "<pre>";

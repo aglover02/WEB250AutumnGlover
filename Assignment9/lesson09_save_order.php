@@ -1,16 +1,7 @@
 <?php
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-var_dump(__DIR__ . DIRECTORY_SEPARATOR . 'website.sqlite');
-exit;
-
-
 try {
-    $db = new \pdo(
-        'sqlite:' . __DIR__
-        . DIRECTORY_SEPARATOR . 'website.sqlite'
-    );
+    $db = new pdo('sqlite::memory:');
 
     //read JSON input
     $data = json_decode(file_get_contents('php://input'), true);
