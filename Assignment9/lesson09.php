@@ -1,7 +1,6 @@
 <?php
 $db = new \PDO(
     'sqlite:' . __DIR__ 
-    . DIRECTORY_SEPARATOR . 'database'
     . DIRECTORY_SEPARATOR . 'website.sqlite'
 );
 ?>
@@ -83,7 +82,6 @@ $db = new \PDO(
 <body>
     <h1>Pizza Order System</h1>
 
-    <!-- Customer Information Section -->
     <section id="customer-info">
         <h2>Customer Information</h2>
         <form id="customer-form" onsubmit="event.preventDefault(); submitOrder();">
