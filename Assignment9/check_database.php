@@ -4,6 +4,7 @@ ini_set('display_errors', 1);
 
 $db = new \PDO(
     'sqlite:' . __DIR__
+    . DIRECTORY_SEPARATOR . 'database'
     . DIRECTORY_SEPARATOR . 'website.sqlite'
 );
 

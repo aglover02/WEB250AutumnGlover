@@ -9,6 +9,7 @@ exit;
 try {
     $db = new \pdo(
         'sqlite:' . __DIR__
+        . DIRECTORY_SEPARATOR . 'database'
         . DIRECTORY_SEPARATOR . 'website.sqlite'
     );
 
