@@ -1,16 +1,10 @@
 <?php
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-var_dump(file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'website.sqlite'));
-exit;
-
-
 try {
     $db = new \pdo(
-        'sqlite:' . __DIR__
+        'sqlite:' . realpath(__DIR__
         . DIRECTORY_SEPARATOR . 'database'
-        . DIRECTORY_SEPARATOR . 'website.sqlite'
+        . DIRECTORY_SEPARATOR . 'website.sqlite')
     );
 
     //read JSON input
@@ -36,8 +30,8 @@ try {
             'fname' => $customer['fname'],
             'lname' => $customer['lname'],
             'phone' => $customer['phone'],
-            'email' => $customer['email'] ?? '',
-            'address' => $customer['address'] ?? ''
+            'email' => $customer['email'],
+            'address' => $customer['address']
         ]);
         $customer_id = $db->lastInsertId();
     } else {
@@ -52,7 +46,7 @@ try {
     $stmt = $db->prepare('INSERT INTO orders (customer_id, order_date, total_price, comments) VALUES (:customer_id, :order_date, :total_price, :comments)');
     $stmt->execute([
         'customer_id' => $customer_id,
-        'order_date' => date('Y-m-d H:i:s'),
+        'order_date' => date('M-d-y H:i:s'),
         'total_price' => $total_price,
         'comments' => $customer['comments']
     ]);
@@ -77,4 +71,3 @@ try {
     http_response_code(500);
     echo json_encode(["error" => "Error: " . $e->getMessage()]);
 }
-?>
