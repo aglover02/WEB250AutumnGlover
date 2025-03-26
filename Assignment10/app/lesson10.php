@@ -1,5 +1,11 @@
 <?php
 session_start();
+
+//added logout processing
+if (isset($_POST['logout'])) {
+    unset($_SESSION['manager_logged_in'], $_SESSION['manager_username']);
+}
+
 $db = new \PDO(
     'mysql:host=web250-db;dbname=website',
     'webuser',
@@ -190,6 +196,8 @@ $db = new \PDO(
     <section id="employee-management">
         <h2>Employee Management (Manager Only)</h2>
         <?php
+        //process manager logout submission if the button is pressed (already processed at the top)
+        
         //process manager login submission
         if (isset($_POST['manager_login'])) {
             $username = $_POST['username'] ?? '';
@@ -223,6 +231,8 @@ $db = new \PDO(
         <?php
         } else {
             echo "<p>Logged in as Manager: " . htmlspecialchars($_SESSION['manager_username']) . "</p>";
+            //added logout button for employees
+            echo '<form method="POST"><button type="submit" name="logout" value="1">Log Out</button></form>';
             
             //display all employee accounts
             $stmt = $db->query("SELECT id, username, full_name, status FROM employees");
