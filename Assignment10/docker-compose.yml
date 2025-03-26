@@ -1,0 +1,27 @@
+services:
+    web:
+        build:
+            context: app
+        container_name: web250
+        hostname: web250
+        expose:
+            - 80
+        ports:
+            - 80:80
+        links:
+            - "db:web250-db"
+    db:
+        build:
+            context: db
+        container_name: mysql
+        hostname: web250-db
+        environment:
+            # Normally you would never do this in a production env.
+            MYSQL_ROOT_PASSWORD: '5ejldg9@!'
+            MYSQL_USER: webuser
+            MYSQL_PASSWORD: 'f@gd9dgjl!'
+            MYSQL_DATABASE: website
+        expose:
+            - 3306
+        ports:
+            - 3306:3306

@@ -1,9 +1,10 @@
 <?php
 session_start();
-$db = new \pdo(
-    'sqlite:' . __DIR__ 
-    . DIRECTORY_SEPARATOR . 'database'
-    . DIRECTORY_SEPARATOR . 'website.sqlite'
+$db = new \PDO(
+    'mysql:host=web250-db;dbname=website',
+    'webuser',
+    'f@gd9dgjl!',
+    [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
 );
 ?>
 <!DOCTYPE html>
@@ -193,7 +194,7 @@ $db = new \pdo(
         if (isset($_POST['manager_login'])) {
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
-            $stmt = $db->prepare("SELECT * FROM employees WHERE username = :username AND status = 'manager'");
+            $stmt = $db->prepare("SELECT password FROM employees WHERE username = :username AND status = 'manager'");
             $stmt->execute(['username' => $username]);
             $manager = $stmt->fetch(pdo::FETCH_ASSOC);
             if ($manager && password_verify($password, $manager['password'])) {
