@@ -72,7 +72,7 @@ if (isset($_POST['logout'])) {
                 email: document.getElementById("email").value
             };
 
-            fetch("/router.php/lesson09_save_order", {
+            fetch("/router.php/lesson10_save_order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(order)
