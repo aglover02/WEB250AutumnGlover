@@ -6,11 +6,6 @@ $db = new \PDO(
     'f@gd9dgjl!',
     [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
 );
-
-//added logout processing
-if (isset($_POST['logout'])) {
-    unset($_SESSION['manager_logged_in'], $_SESSION['manager_username']);
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -171,7 +166,7 @@ if (isset($_POST['logout'])) {
             if (!empty($_GET['phone'])) {
                 $stmt = $db->prepare('SELECT o.id, o.order_date, o.total_price, o.status, od.size, od.toppings, od.quantity FROM orders o JOIN order_details od ON o.id = od.order_id WHERE o.customer_id = (SELECT id FROM customers WHERE phone = :phone)');
                 $stmt->execute(['phone' => $_GET['phone']]);
-                $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $orders = $stmt->fetchAll(pdo::FETCH_ASSOC);
                 if ($orders) {
                     foreach ($orders as $order) {
                         echo "<p>Order ID: {$order['id']}<br>";
@@ -194,14 +189,14 @@ if (isset($_POST['logout'])) {
     <!-- manager-only employee management section -->
     <section id="employee-management">
         <h2>Employee Management (Manager Only)</h2>
-        <?php        
+        <?php
         //process manager login submission
         if (isset($_POST['manager_login'])) {
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
             $stmt = $db->prepare("SELECT password FROM employees WHERE username = :username AND status = 'manager'");
             $stmt->execute(['username' => $username]);
-            $manager = $stmt->fetch(PDO::FETCH_ASSOC);
+            $manager = $stmt->fetch(pdo::FETCH_ASSOC);
             if ($manager && password_verify($password, $manager['password'])) {
                 $_SESSION['manager_logged_in'] = true;
                 $_SESSION['manager_username'] = $username;
@@ -228,12 +223,10 @@ if (isset($_POST['logout'])) {
         <?php
         } else {
             echo "<p>Logged in as Manager: " . htmlspecialchars($_SESSION['manager_username']) . "</p>";
-            //added logout button for employees
-            echo '<form method="POST"><button type="submit" name="logout" value="1">Log Out</button></form>';
             
             //display all employee accounts
             $stmt = $db->query("SELECT id, username, full_name, status FROM employees");
-            $employees = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $employees = $stmt->fetchAll(pdo::FETCH_ASSOC);
             if ($employees) {
                 echo "<h3>Employee Accounts</h3>";
                 echo "<table border='1'>";
@@ -308,7 +301,7 @@ if (isset($_POST['logout'])) {
                 $edit_id = $_POST['edit_employee'];
                 $stmt = $db->prepare("SELECT * FROM employees WHERE id = :id");
                 $stmt->execute(['id' => $edit_id]);
-                $emp_to_edit = $stmt->fetch(PDO::FETCH_ASSOC);
+                $emp_to_edit = $stmt->fetch(pdo::FETCH_ASSOC);
                 if ($emp_to_edit) {
                     ?>
                     <h3>Edit Employee Account</h3>
