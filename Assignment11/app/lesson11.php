@@ -107,23 +107,23 @@ if (isset($_COOKIE['customer_info'])) {
         <form id="customer-form" onsubmit="event.preventDefault(); submitOrder();">
             <p>
                 <label for="fname">First Name:</label>
-                <input type="text" id="fname" name="fname" required value="<?php echo isset($customer_info['fname']) ? htmlspecialchars($customer_info['fname']) : ''; ?>">
+                <input type="text" id="fname" name="fname" required autocomplete="given-name" value="<?php echo isset($customer_info['fname']) ? htmlspecialchars($customer_info['fname']) : ''; ?>">
             </p>
             <p>
                 <label for="lname">Last Name:</label>
-                <input type="text" id="lname" name="lname" required value="<?php echo isset($customer_info['lname']) ? htmlspecialchars($customer_info['lname']) : ''; ?>">
+                <input type="text" id="lname" name="lname" required autocomplete="family-name" value="<?php echo isset($customer_info['lname']) ? htmlspecialchars($customer_info['lname']) : ''; ?>">
             </p>
             <p>
                 <label for="address">Address:</label>
-                <input type="text" id="address" name="address" required value="<?php echo isset($customer_info['address']) ? htmlspecialchars($customer_info['address']) : ''; ?>">
+                <input type="text" id="address" name="address" required autocomplete="street-address" value="<?php echo isset($customer_info['address']) ? htmlspecialchars($customer_info['address']) : ''; ?>">
             </p>
             <p>
                 <label for="phone">Phone:</label>
-                <input type="text" id="phone" name="phone" required value="<?php echo isset($customer_info['phone']) ? htmlspecialchars($customer_info['phone']) : ''; ?>">
+                <input type="text" id="phone" name="phone" required autocomplete="tel" value="<?php echo isset($customer_info['phone']) ? htmlspecialchars($customer_info['phone']) : ''; ?>">
             </p>
             <p>
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required value="<?php echo isset($customer_info['email']) ? htmlspecialchars($customer_info['email']) : ''; ?>">
+                <input type="email" id="email" name="email" required autocomplete="email" value="<?php echo isset($customer_info['email']) ? htmlspecialchars($customer_info['email']) : ''; ?>">
             </p>
             <p>
                 <label for="comments">Special Notes/Delivery Instructions:</label>
