@@ -82,7 +82,7 @@ if (isset($_COOKIE['customer_info'])) {
                 zip: document.getElementById("zip").value
             };
 
-            fetch("/router.php/lesson11_save_order", {
+            fetch("/router.php/lesson12_save_order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(order)
@@ -118,7 +118,7 @@ if (isset($_COOKIE['customer_info'])) {
             <!-- New Zip Code field -->
             <p>
                 <label for="zip">Zip Code:</label>
-                <input type="text" id="zip" name="zip" required autocomplete="postal-code">
+                <input type="text" id="zip" name="zip" required autocomplete="postal-code"value="<?php echo isset($customer_info['phone']) ? htmlspecialchars($customer_info['phone']) : ''; ?>">
             </p>
             <p>
                 <label for="phone">Phone:</label>
@@ -213,19 +213,20 @@ if (isset($_COOKIE['customer_info'])) {
         if (isset($_POST['employee_login'])) {
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
-            $stmt = $db->prepare("SELECT password FROM employees WHERE username = :username AND status = 'employee'");
+            $stmt = $db->prepare("SELECT id, password FROM employees WHERE username = :username AND status = 'employee'");
             $stmt->execute(['username' => $username]);
-            $employee = $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $employee_id = (int) $result['id'];
             $login_success = false;
-            if ($employee && password_verify($password, $employee['password'])) {
+            if ($result && password_verify($password, $result['password'])) {
                 $_SESSION['employee_logged_in'] = true;
                 $_SESSION['employee_username'] = $username;
                 $login_success = true;
             } else {
                 echo "<p style='color:red;'>Invalid employee credentials.</p>";
             }
-            $stmt = $db->prepare("INSERT INTO login_attempts (username, role, success, attempt_time) VALUES (:username, 'employee', :success, NOW())");
-            $stmt->execute(['username' => $username, 'success' => $login_success ? 1 : 0]);
+            $stmt = $db->prepare("INSERT INTO login_attempts (employee_id, role, success, attempt_time) VALUES (:employee_id, 'employee', :success, NOW())");
+            $stmt->execute(['employee_id' => $employee_id, 'success' => $login_success ? 1 : 0]);
         }
         
         if (!isset($_SESSION['employee_logged_in'])) {
@@ -257,19 +258,20 @@ if (isset($_COOKIE['customer_info'])) {
         if (isset($_POST['manager_login'])) {
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
-            $stmt = $db->prepare("SELECT password FROM employees WHERE username = :username AND status = 'manager'");
+            $stmt = $db->prepare("SELECT id, password FROM employees WHERE username = :username AND status = 'manager'");
             $stmt->execute(['username' => $username]);
-            $manager = $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $employee_id = (int) $result['id'];
             $login_success = false;
-            if ($manager && password_verify($password, $manager['password'])) {
+            if ($manager && password_verify($password, $result['password'])) {
                 $_SESSION['manager_logged_in'] = true;
                 $_SESSION['manager_username'] = $username;
                 $login_success = true;
             } else {
                 echo "<p style='color:red;'>Invalid manager credentials.</p>";
             }
-            $stmt = $db->prepare("INSERT INTO login_attempts (username, role, success, attempt_time) VALUES (:username, 'manager', :success, NOW())");
-            $stmt->execute(['username' => $username, 'success' => $login_success ? 1 : 0]);
+            $stmt = $db->prepare("INSERT INTO login_attempts (employee_id, role, success, attempt_time) VALUES (:employee_id, 'manager', :success, NOW())");
+            $stmt->execute(['employee_id' => $employee_id, 'success' => $login_success ? 1 : 0]);
         }
         
         if (!isset($_SESSION['manager_logged_in'])) {
@@ -451,7 +453,7 @@ if (isset($_COOKIE['customer_info'])) {
                 $stmt = $db->prepare("SELECT SUM(tax) as total_tax, COUNT(*) as order_count FROM orders WHERE YEAR(order_date) = :year AND MONTH(order_date) = :month");
                 $stmt->execute(['year' => $year, 'month' => $month]);
                 $report = $stmt->fetch(PDO::FETCH_ASSOC);
-                echo "<h4>Report for $year-" . sprintf("%02d", $month) . "</h4>";
+                echo "<h4>Report for $year-$month</h4>";
                 echo "<p>Total Orders: " . htmlspecialchars($report['order_count']) . "</p>";
                 echo "<p>Total Taxes Collected: $" . number_format($report['total_tax'], 2) . "</p>";
             }

@@ -49,7 +49,7 @@ try {
          $tax_rate = 0.10; // if error occurs
     } else {
          $api_data = json_decode($api_response, true);
-         $tax_rate = isset($api_data['tax_rate']) ? $api_data['tax_rate'] : 0.10;
+         $tax_rate = $api_data['tax_rate'] ?? 0.10;
     }
     curl_close($curl);
 
