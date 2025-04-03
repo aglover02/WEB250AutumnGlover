@@ -53,12 +53,11 @@ try {
     }
     curl_close($curl);
 
-    // Calculate tax based on retrieved rate
+    //calculate tax based on retrieved rate
     $tax = $subtotal * $tax_rate;
     $total_price = $subtotal + $tax;
 
-    // --- Insert order with tax into orders table ---
-    // Using a proper date format for later reporting (Y-m-d H:i:s)
+    //insert order with tax into orders table
     $stmt = $db->prepare('INSERT INTO orders (customer_id, order_date, total_price, tax, comments) VALUES (:customer_id, :order_date, :total_price, :tax, :comments)');
     $stmt->execute([
         'customer_id' => $customer_id,

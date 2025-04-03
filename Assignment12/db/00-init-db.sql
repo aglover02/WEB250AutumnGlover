@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS orders (
     customer_id INT UNSIGNED NOT NULL,
     order_date  DATETIME NOT NULL,
     total_price DECIMAL(6,2) NOT NULL,
+    tax DECIMAL(10,2) NOT NULL DEFAULT 0, 
     status      VARCHAR(25) DEFAULT 'Pending' NOT NULL,
     comments    TEXT,
     FOREIGN KEY (customer_id) REFERENCES customers (id),
