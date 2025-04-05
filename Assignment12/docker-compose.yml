@@ -1,9 +1,11 @@
 services:
     web:
         build:
-            context: app
+            context: build/web
         container_name: web250
         hostname: web250
+        volumes:
+            - ./app:/var/www/html
         expose:
             - 80
         ports:
@@ -12,7 +14,7 @@ services:
             - "db:web250-db"
     db:
         build:
-            context: db
+            context: build/db
         container_name: mysql
         hostname: web250-db
         environment:

@@ -1,4 +1,32 @@
 <?php
+// Embedded proxy to fetch tax rate (triggered if "fetch_tax_rate" parameter is set)
+if (isset($_GET['fetch_tax_rate']) && isset($_GET['zip'])) {
+    header("Access-Control-Allow-Origin: *");
+    header("Content-Type: application/json");
+    
+    $zip = $_GET['zip'];
+    if (!$zip) {
+        echo json_encode(["error" => "No zip code provided"]);
+        exit;
+    }
+    
+    // Build the API URL for the tax rate
+    $url = "http://assignment2example-env-1v2.eba-m9eezpmg.us-east-1.elasticbeanstalk.com/taxrates/IL/" . urlencode($zip);
+    
+    // Use a custom user agent as in Assignment 8
+    $user_agent = "YourApp/1.0 (https://yourdomain.com)";
+    $options  = array("http" => array("user_agent" => $user_agent));
+    $context  = stream_context_create($options);
+    
+    $data = @file_get_contents($url, false, $context);
+    if ($data === false) {
+        echo json_encode(["error" => "Failed to fetch data from API."]);
+        exit;
+    }
+    echo $data;
+    exit;
+}
+
 session_start();
 $db = new \PDO(
     'mysql:host=web250-db;dbname=website',
@@ -25,7 +53,7 @@ if (isset($_COOKIE['customer_info'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,12 +61,42 @@ if (isset($_COOKIE['customer_info'])) {
     <link rel="stylesheet" href="/styles.css">
     <title>Pizza Order System</title>
     <script>
+        // Order object with a taxRate property (default value until fetched)
         let order = {
             customer: {},
             pizzas: [],
             totalPrice: 0,
-            taxRate: 0.1
+            taxRate: 0.0  // Will be updated once the user enters a zip code
         };
+
+        // Function to fetch the tax rate using the embedded PHP proxy in this file
+        function fetchTaxRate(zip) {
+            const proxyUrl = `/lesson12.php?fetch_tax_rate=1&zip=${zip}`;
+            return fetch(proxyUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                });
+        }
+
+        // Update order summary with the latest subtotal, tax, and total
+        function updateOrderSummary() {
+            order.totalPrice = order.pizzas.reduce((sum, pizza) => sum + pizza.price, 0);
+            // Use the fetched taxRate; if not set, show 0%
+            const taxRate = order.taxRate || 0.0;
+            const tax = order.totalPrice * taxRate;
+            const totalWithTax = order.totalPrice + tax;
+            document.getElementById("order-summary").innerHTML = 
+                `<h3>Order Summary</h3>
+                ${order.pizzas.map((pizza, index) => 
+                    `<p>Pizza ${index + 1}: ${pizza.size}, ${pizza.toppings.join(", ")} x ${pizza.quantity} - $${pizza.price.toFixed(2)}</p>`
+                ).join("")}
+                <p><strong>Subtotal:</strong> $${order.totalPrice.toFixed(2)}</p>
+                <p><strong>Tax (${(taxRate*100).toFixed(0)}%):</strong> $${tax.toFixed(2)}</p>
+                <p><strong>Total:</strong> $${totalWithTax.toFixed(2)}</p>`;
+        }
 
         function addPizza() {
             console.log("addPizza() called");
@@ -57,21 +115,26 @@ if (isset($_COOKIE['customer_info'])) {
             updateOrderSummary();
         }
 
-        function updateOrderSummary() {
-            order.totalPrice = order.pizzas.reduce((sum, pizza) => sum + pizza.price, 0);
-            const tax = order.totalPrice * order.taxRate;
-            const totalWithTax = order.totalPrice + tax;
-            document.getElementById("order-summary").innerHTML = 
-                `<h3>Order Summary</h3>
-                ${order.pizzas.map((pizza, index) => 
-                    `<p>Pizza ${index + 1}: ${pizza.size}, ${pizza.toppings.join(", ")} x ${pizza.quantity} - $${pizza.price.toFixed(2)}</p>`
-                ).join("")}
-                <p><strong>Subtotal:</strong> $${order.totalPrice.toFixed(2)}</p>
-                <p><strong>Tax (${(order.taxRate*100).toFixed(0)}%):</strong> $${tax.toFixed(2)}</p>
-                <p><strong>Total:</strong> $${totalWithTax.toFixed(2)}</p>`;
-        }
+        // When the zip code field loses focus, fetch the tax rate and update the order summary
+        window.addEventListener("DOMContentLoaded", function() {
+            const zipField = document.getElementById("zip");
+            zipField.addEventListener("blur", function() {
+                let zip = zipField.value;
+                if (zip) {
+                    fetchTaxRate(zip)
+                        .then(data => {
+                            console.log("Fetched tax data:", data);
+                            // Assume the API returns the tax rate under "EstimatedCombinedRate"
+                            order.taxRate = data.EstimatedCombinedRate || 0.0;
+                            updateOrderSummary();
+                        })
+                        .catch(error => console.error("Error fetching tax rate:", error));
+                }
+            });
+        });
 
         function submitOrder() {
+            // Gather customer information from the form, including the zip code
             order.customer = {
                 fname: document.getElementById("fname").value,
                 lname: document.getElementById("lname").value,
@@ -82,6 +145,24 @@ if (isset($_COOKIE['customer_info'])) {
                 zip: document.getElementById("zip").value
             };
 
+            // If taxRate hasn't been fetched yet, fetch it now before submitting
+            if (!order.taxRate && order.customer.zip) {
+                fetchTaxRate(order.customer.zip)
+                    .then(data => {
+                        console.log("Fetched tax data during submission:", data);
+                        order.taxRate = data.EstimatedCombinedRate || 0.0;
+                        updateOrderSummary();
+                        // Now submit the order
+                        sendOrder();
+                    })
+                    .catch(error => console.error("Error fetching tax rate during submission:", error));
+            } else {
+                sendOrder();
+            }
+        }
+
+        // Helper function to submit order data to the server
+        function sendOrder() {
             fetch("/router.php/lesson12_save_order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -89,11 +170,12 @@ if (isset($_COOKIE['customer_info'])) {
             })
             .then(response => response.text())
             .then(data => {
+                // Save customer info in a cookie for future orders
                 document.cookie = "customer_info=" + encodeURIComponent(JSON.stringify(order.customer)) + "; path=/; max-age=" + (60*60*24*30);
                 alert("Order submitted successfully!");
                 console.log(data);
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => console.error("Error submitting order:", error));
         }
     </script>
 </head>
@@ -115,10 +197,10 @@ if (isset($_COOKIE['customer_info'])) {
                 <label for="address">Address:</label>
                 <input type="text" id="address" name="address" required autocomplete="street-address" value="<?php echo isset($customer_info['address']) ? htmlspecialchars($customer_info['address']) : ''; ?>">
             </p>
-            <!-- New Zip Code field -->
+            <!-- Zip Code field -->
             <p>
                 <label for="zip">Zip Code:</label>
-                <input type="text" id="zip" name="zip" required autocomplete="postal-code"value="<?php echo isset($customer_info['phone']) ? htmlspecialchars($customer_info['phone']) : ''; ?>">
+                <input type="text" id="zip" name="zip" required autocomplete="postal-code" value="<?php echo isset($customer_info['zip']) ? htmlspecialchars($customer_info['zip']) : ''; ?>">
             </p>
             <p>
                 <label for="phone">Phone:</label>
@@ -207,6 +289,7 @@ if (isset($_COOKIE['customer_info'])) {
         </div>
     </section>
 
+    <!-- Employee Dashboard and Management sections remain unchanged -->
     <section id="employee-dashboard">
         <h2>Employee Dashboard (Employee Only)</h2>
         <?php        
@@ -225,7 +308,7 @@ if (isset($_COOKIE['customer_info'])) {
             } else {
                 echo "<p style='color:red;'>Invalid employee credentials.</p>";
             }
-            $stmt = $db->prepare("INSERT INTO login_attempts (employee_id, role, success, attempt_time) VALUES (:employee_id, 'employee', :success, NOW())");
+            $stmt = $db->prepare("INSERT INTO login_attempts (employee_id, role, success) VALUES (:employee_id, 'employee', :success)");
             $stmt->execute(['employee_id' => $employee_id, 'success' => $login_success ? 1 : 0]);
         }
         
@@ -263,14 +346,14 @@ if (isset($_COOKIE['customer_info'])) {
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $employee_id = (int) $result['id'];
             $login_success = false;
-            if ($manager && password_verify($password, $result['password'])) {
+            if ($result && password_verify($password, $result['password'])) {
                 $_SESSION['manager_logged_in'] = true;
                 $_SESSION['manager_username'] = $username;
                 $login_success = true;
             } else {
                 echo "<p style='color:red;'>Invalid manager credentials.</p>";
             }
-            $stmt = $db->prepare("INSERT INTO login_attempts (employee_id, role, success, attempt_time) VALUES (:employee_id, 'manager', :success, NOW())");
+            $stmt = $db->prepare("INSERT INTO login_attempts (employee_id, role, success) VALUES (:employee_id, 'manager', :success)");
             $stmt->execute(['employee_id' => $employee_id, 'success' => $login_success ? 1 : 0]);
         }
         
@@ -431,7 +514,7 @@ if (isset($_COOKIE['customer_info'])) {
                     echo "<p style='color:red;'>Username and Full Name are required.</p>";
                 }
             }
-            //tax summary report for managers
+            // Tax summary report for managers
             ?>
             <h3>Tax Summary Report</h3>
             <form method="GET">

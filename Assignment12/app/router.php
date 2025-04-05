@@ -17,6 +17,7 @@ switch ($lessonName) {
     case 'lesson10':
     case 'lesson11':
     case 'lesson12':
+    case 'lesson12_save_order':
     case 'final_project':
         include "$lessonName.php";
         break; 
