@@ -48,6 +48,14 @@ if (isset($_COOKIE['customer_info'])) {
         $customer_info = $decoded;
     }
 }
+// handle employee order status updates 
+if (isset($_POST['update_order_status'], $_POST['update_order_id'])) {
+    $stmt = $db->prepare("UPDATE orders SET status = :status WHERE id = :id");
+    $stmt->execute([
+        'status' => $_POST['update_order_status'],
+        'id'     => $_POST['update_order_id']
+    ]);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -266,25 +274,31 @@ if (isset($_COOKIE['customer_info'])) {
         <div id="customer-orders">
             <?php
             if (!empty($_GET['phone'])) {
-                $stmt = $db->prepare('SELECT o.id, o.order_date, o.total_price, o.status, od.size, od.toppings, od.quantity FROM orders o JOIN order_details od ON o.id = od.order_id WHERE o.customer_id = (SELECT id FROM customers WHERE phone = :phone)');
-                $stmt->execute(['phone' => $_GET['phone']]);
-                $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                if ($orders) {
-                    foreach ($orders as $order) {
-                        echo "<p>Order ID: {$order['id']}<br>";
-                        echo "Date: {$order['order_date']}<br>";
-                        echo "Size: {$order['size']}<br>";
-                        echo "Toppings: {$order['toppings']}<br>";
-                        echo "Quantity: {$order['quantity']}<br>";
-                        echo "Total Price: \${$order['total_price']}<br>";
-                        echo "Status: {$order['status']}</p>";
-                        echo "<hr>";
-                    }
-                } else {
-                    echo "<p>No orders found.</p>";
+                // group past orders into JS array
+                $raw = $db->prepare(
+                    'SELECT o.id, od.size, od.toppings, od.quantity
+                    FROM orders o
+                    JOIN order_details od ON o.id = od.order_id
+                    WHERE o.customer_id = (SELECT id FROM customers WHERE phone = :phone)'
+                );
+                $raw->execute(['phone' => $_GET['phone']]);
+                $rows = $raw->fetchAll(PDO::FETCH_ASSOC);
+                $grouped = [];
+                foreach ($rows as $r) {
+                    $id = $r['id'];
+                    if (!isset($grouped[$id])) $grouped[$id] = [];
+                    $grouped[$id][] = [
+                        'size'     => $r['size'],
+                        'toppings' => explode(', ', $r['toppings']),
+                        'quantity' => (int)$r['quantity']
+                    ];
+                }
+                echo '<script>var pastOrders = ' . json_encode(array_values($grouped)) . ';</script>';
+                foreach (array_keys($grouped) as $i => $orderId) {
+                    echo "<p>Order ID: $orderId &nbsp;<button type='button' onclick='reorderOrder($i)'>Reorder</button></p>";
                 }
             }
-            ?>
+        ?>          
         </div>
     </section>
 
@@ -329,7 +343,31 @@ if (isset($_COOKIE['customer_info'])) {
         } else {
             echo "<p>Logged in as Employee: " . htmlspecialchars($_SESSION['employee_username']) . "</p>";
             echo '<form method="POST"><button type="submit" name="logout_employee" value="1">Log Out</button></form>';
-            echo "<p>Employee Dashboard Content</p>";
+    // Live orders table with Complete/Cancel
+$stmt = $db->query("SELECT id, order_date, total_price, status FROM orders");
+$liveOrders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+if ($liveOrders) {
+    echo "<h3>Current Orders</h3><table><tr><th>ID</th><th>Date</th><th>Total</th><th>Status</th><th>Actions</th></tr>";
+    foreach ($liveOrders as $lo) {
+        echo "<tr>";
+        echo "<td>" . htmlspecialchars($lo['id']) . "</td>";
+        echo "<td>" . htmlspecialchars($lo['order_date']) . "</td>";
+        echo "<td>$" . number_format($lo['total_price'],2) . "</td>";
+        echo "<td>" . htmlspecialchars($lo['status']) . "</td>";
+        echo "<td>";
+        echo "<form method='POST' style='display:inline;'>";
+        echo "<input type='hidden' name='update_order_id' value='" . htmlspecialchars($lo['id']) . "'>";
+        echo "<button type='submit' name='update_order_status' value='Completed'>Complete</button> ";
+        echo "<button type='submit' name='update_order_status' value='Cancelled'>Cancel</button>";
+        echo "</form>";
+        echo "</td>";
+        echo "</tr>";
+    }
+    echo "</table>";
+} else {
+    echo "<p>No current orders.</p>";
+}
+
         }
         ?>
     </section>
@@ -542,5 +580,26 @@ if (isset($_COOKIE['customer_info'])) {
         }
         ?>
     </section>
+    <script>
+// Load a past order back into the builder
+function reorderOrder(index) {
+  order.pizzas = [];
+  pastOrders[index].forEach(p => {
+    const basePrice = p.size === 'Small' ? 8
+                    : p.size === 'Medium' ? 12 : 15;
+    const toppingPrice = p.size === 'Small' ? 1
+                      : p.size === 'Medium' ? 1.5 : 2;
+    const price = (basePrice + toppingPrice * p.toppings.length) * p.quantity;
+    order.pizzas.push({
+      size: p.size,
+      toppings: p.toppings,
+      quantity: p.quantity,
+      price: price
+    });
+  });
+  updateOrderSummary();
+}
+</script>
+
 </body>
 </html>
