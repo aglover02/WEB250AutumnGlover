@@ -18,6 +18,8 @@ switch ($lessonName) {
     case 'lesson11':
     case 'lesson12':
     case 'lesson12_save_order':
+    case 'lesson13':
+    case 'lesson13_save_order':
     case 'finalProject':
     case 'finalProjectSaveOrder':
         include "$lessonName.php";
