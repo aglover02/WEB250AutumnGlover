@@ -65,7 +65,7 @@ if (isset($_POST['update_order_status'], $_POST['update_order_id'])) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/stylesFinal.css">
     <title>Pizza Order System</title>
     <script>
         // Order object with a taxRate property (default value until fetched)
@@ -204,7 +204,6 @@ if (isset($_POST['update_order_status'], $_POST['update_order_id'])) {
                 <label for="address">Address:</label>
                 <input type="text" id="address" name="address" required autocomplete="street-address" value="<?php echo isset($customer_info['address']) ? htmlspecialchars($customer_info['address']) : ''; ?>">
             </p>
-            <!-- Zip Code field -->
             <p>
                 <label for="zip">Zip Code:</label>
                 <input type="text" id="zip" name="zip" required autocomplete="postal-code" value="<?php echo isset($customer_info['zip']) ? htmlspecialchars($customer_info['zip']) : ''; ?>">
