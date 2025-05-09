@@ -297,8 +297,14 @@ if (isset($_POST['update_order_status'], $_POST['update_order_id'])) {
                 echo '<script>var pastOrders = ' . json_encode(array_values($grouped)) . ';</script>';
                 foreach (array_keys($grouped) as $i => $orderId) {
                     echo "<p>Order ID: $orderId &nbsp;<button type='button' onclick='reorderOrder($i)'>Reorder</button></p>";
+                    foreach ($grouped[$orderId] as $pizza) {
+                        $size = htmlspecialchars($pizza['size']);
+                        $quantity = htmlspecialchars($pizza['quantity']);
+                        $toppings = htmlspecialchars(implode(", ", $pizza['toppings']));
+                        echo "<p>&nbsp;&nbsp;&nbsp;Size: $size, Quantity: $quantity, Toppings: $toppings</p>";
+                    }
                 }
-            }
+           }
         ?>          
         </div>
     </section>
