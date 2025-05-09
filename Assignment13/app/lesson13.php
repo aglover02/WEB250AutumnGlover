@@ -78,7 +78,7 @@ if (isset($_POST['update_order_status'], $_POST['update_order_id'])) {
 
         // Function to fetch the tax rate using the embedded PHP proxy in this file
         function fetchTaxRate(zip) {
-            const proxyUrl = `/lesson13.php?fetch_tax_rate=1&zip=${zip}`;
+            const proxyUrl = `/finalProject.php?fetch_tax_rate=1&zip=${zip}`;
             return fetch(proxyUrl)
                 .then(response => {
                     if (!response.ok) {
@@ -172,7 +172,7 @@ if (isset($_POST['update_order_status'], $_POST['update_order_id'])) {
 
         // Helper function to submit order data to the server
         function sendOrder() {
-            fetch("/router.php/lesson13_save_order", {
+            fetch("/router.php/finalProjectSaveOrder", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(order)
@@ -296,20 +296,20 @@ if (isset($_POST['update_order_status'], $_POST['update_order_id'])) {
                 }
                 echo '<script>var pastOrders = ' . json_encode(array_values($grouped)) . ';</script>';
                 foreach (array_keys($grouped) as $i => $orderId) {
-                    echo "<p>Order ID: $orderId &nbsp;<button type='button' onclick='reorderOrder($i)'>Reorder</button></p>";
+                    echo "<h3>Order ID: $orderId</h3>";
                     foreach ($grouped[$orderId] as $pizza) {
                         $size = htmlspecialchars($pizza['size']);
                         $quantity = htmlspecialchars($pizza['quantity']);
                         $toppings = htmlspecialchars(implode(", ", $pizza['toppings']));
                         echo "<p>&nbsp;&nbsp;&nbsp;Size: $size, Quantity: $quantity, Toppings: $toppings</p>";
                     }
+                    echo "<p><button type='button' onclick='reorderOrder($i)'>Reorder</button></p>";
                 }
-           }
+            }
         ?>          
         </div>
     </section>
 
-    <!-- Employee Dashboard and Management sections remain unchanged -->
     <section id="employee-dashboard">
         <h2>Employee Dashboard (Employee Only)</h2>
         <?php        
@@ -350,7 +350,6 @@ if (isset($_POST['update_order_status'], $_POST['update_order_id'])) {
         } else {
             echo "<p>Logged in as Employee: " . htmlspecialchars($_SESSION['employee_username']) . "</p>";
             echo '<form method="POST"><button type="submit" name="logout_employee" value="1">Log Out</button></form>';
-    // Live orders table with Complete/Cancel
 $stmt = $db->query("SELECT id, order_date, total_price, status FROM orders");
 $liveOrders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if ($liveOrders) {
