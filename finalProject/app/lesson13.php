@@ -102,7 +102,8 @@ if (isset($_POST['update_order_status'], $_POST['update_order_id'])) {
                 ).join("")}
                 <p><strong>Subtotal:</strong> $${order.totalPrice.toFixed(2)}</p>
                 <p><strong>Tax (${(taxRate*100).toFixed(0)}%):</strong> $${tax.toFixed(2)}</p>
-                <p><strong>Total:</strong> $${totalWithTax.toFixed(2)}</p>`;
+                <p><strong>Total:</strong> $${totalWithTax.toFixed(2)}</p>
+                <p><button type="button" onclick="submitOrder()">Submit Order</button></p>`;
         }
 
         function addPizza() {
