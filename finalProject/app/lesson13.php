@@ -88,7 +88,7 @@ if (isset($_POST['update_order_status'], $_POST['update_order_id'])) {
                 });
         }
 
-        // Update order summary with the latest subtotal, tax, and total
+        //Update order summary with the latest subtotal, tax, and total
         function updateOrderSummary() {
             order.totalPrice = order.pizzas.reduce((sum, pizza) => sum + pizza.price, 0);
             // Use the fetched taxRate; if not set, show 0%
