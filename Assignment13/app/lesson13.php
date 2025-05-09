@@ -78,7 +78,7 @@ if (isset($_POST['update_order_status'], $_POST['update_order_id'])) {
 
         // Function to fetch the tax rate using the embedded PHP proxy in this file
         function fetchTaxRate(zip) {
-            const proxyUrl = `/finalProject.php?fetch_tax_rate=1&zip=${zip}`;
+            const proxyUrl = `/lesson13.php?fetch_tax_rate=1&zip=${zip}`;
             return fetch(proxyUrl)
                 .then(response => {
                     if (!response.ok) {
@@ -172,7 +172,7 @@ if (isset($_POST['update_order_status'], $_POST['update_order_id'])) {
 
         // Helper function to submit order data to the server
         function sendOrder() {
-            fetch("/router.php/finalProjectSaveOrder", {
+            fetch("/router.php/lesson13_save_order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(order)
