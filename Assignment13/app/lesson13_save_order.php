@@ -32,7 +32,7 @@ try {
     $options  = array("http" => array("user_agent" => $user_agent));
     $context  = stream_context_create($options);
 
-    $apiData = @file_get_contents($apiUrl, false, $context);
+    $apiData = file_get_contents($apiUrl, false, $context);
     if ($apiData === false) {
         http_response_code(500);
         echo json_encode(["error" => "Failed to fetch tax rate from API."]);
