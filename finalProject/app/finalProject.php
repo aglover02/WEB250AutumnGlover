@@ -1,5 +1,16 @@
 <?php
-// Embedded proxy to fetch tax rate (triggered if "fetch_tax_rate" parameter is set)
+/*
+  finalProject.php
+ 
+  This file serves as the main entry point for the Pizza Order System. It combines both server-side and client-side logic:
+  - Provides an embedded PHP proxy to fetch tax rates via an external API using a ZIP code.
+  - Manages user sessions for customers, employees, and managers.
+  - Handles customer order submission and displays order history.
+  - Includes employee and manager dashboards for order management and employee account administration.
+  - Integrates JavaScript to dynamically build pizza orders, calculate totals with tax, and submit order data via JSON.
+  - Supports basic data persistence via cookies and handles database interactions using PDO.
+ */
+
 if (isset($_GET['fetch_tax_rate']) && isset($_GET['zip'])) {
     header("Access-Control-Allow-Origin: *");
     header("Content-Type: application/json");
